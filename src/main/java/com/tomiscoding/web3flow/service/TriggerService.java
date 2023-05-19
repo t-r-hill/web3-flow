@@ -4,12 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
+import org.web3j.protocol.core.methods.response.EthGasPrice;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.utils.Convert;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class TriggerService {
@@ -24,7 +26,7 @@ public class TriggerService {
         EthGetBalance result = new EthGetBalance();
         BigDecimal balanceAsEth = null;
         try {
-            result = this.web3j.ethGetBalance("0x1E8E4445f7736084A48c3cca4Cf3d148EC6CB3fC",
+            result = web3j.ethGetBalance("0x1E8E4445f7736084A48c3cca4Cf3d148EC6CB3fC",
                     DefaultBlockParameter.valueOf("latest"))
                     .sendAsync().get();
             BigInteger balanceAsWei = result.getBalance();
@@ -33,5 +35,18 @@ public class TriggerService {
             System.out.println("Exception from EthGetBalance");
         }
         return balanceAsEth;
+    }
+
+    public BigDecimal getGasPrice() {
+        EthGasPrice result = new EthGasPrice();
+        BigDecimal gasPriceAsGwei = null;
+        try {
+            result = web3j.ethGasPrice().sendAsync().get();
+            BigInteger gasPriceAsWei = result.getGasPrice();
+            gasPriceAsGwei = Convert.fromWei(new BigDecimal(gasPriceAsWei), Convert.Unit.GWEI);
+        } catch (Exception e) {
+            System.out.println();;
+        }
+        return gasPriceAsGwei;
     }
 }

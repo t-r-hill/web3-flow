@@ -22,5 +22,6 @@ public class Web3FlowApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		System.out.println(triggerService.getEthBalance());
+		System.out.println(triggerService.getGasPrice());
 	}
 }
